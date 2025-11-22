@@ -164,9 +164,8 @@ backend/
 ├── main.py              # FastAPI application and endpoints
 ├── model.py             # Model loading and inference logic
 ├── requirements.txt     # Python dependencies
-├── Dockerfile           # Docker configuration for deployment
-├── railway.json        # Railway deployment configuration
-├── Procfile            # Process file for Railway
+├── render.yaml         # Render deployment configuration
+├── Procfile            # Process file for Render
 └── saved_models/       # Model weights directory
     └── microplastic_fasterrcnn.pth
 ```
@@ -182,27 +181,18 @@ The API returns appropriate HTTP status codes:
 
 ## Deployment
 
-### Railway
+### Render
 
-This backend is configured for deployment on Railway.app:
+This backend is configured for deployment on Render:
 
-1. Push code to GitHub
-2. Connect repository to Railway
+1. Push code to GitHub (with model file via Git LFS)
+2. Connect repository to Render
 3. Set root directory to `backend`
 4. Add environment variables:
    - `CORS_ORIGINS`: Your frontend URL
 5. Deploy
 
-See the main project README for detailed deployment instructions.
-
-### Docker
-
-Build and run with Docker:
-
-```bash
-docker build -t microplastic-api .
-docker run -p 8000:8000 -e CORS_ORIGINS=https://your-frontend.com microplastic-api
-```
+See [RENDER_DEPLOYMENT.md](../RENDER_DEPLOYMENT.md) for detailed deployment instructions.
 
 ## Development
 

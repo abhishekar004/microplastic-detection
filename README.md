@@ -15,7 +15,7 @@ This project provides a complete solution for microplastic detection in water sa
 - **Export Reports**: Download detailed JSON reports of all detections
 - **Modern UI/UX**: Beautiful, responsive interface built with React and Tailwind CSS
 - **RESTful API**: Clean, well-documented FastAPI backend
-- **Production Ready**: Configured for deployment on Railway and Vercel
+- **Production Ready**: Configured for deployment on Render and Vercel
 
 ## 🏗️ Architecture
 
@@ -93,33 +93,47 @@ Frontend will be available at `http://localhost:8080`
 
 This project is configured for deployment on:
 
-- **Railway** - Backend API (Python/FastAPI)
+- **Render** - Backend API (Python/FastAPI)
 - **Vercel** - Frontend (React/Vite)
 
 ### Quick Deployment Guide
 
-#### 1. Deploy Backend to Railway
+#### 1. Set Up Git LFS for Model File
 
-1. Go to [railway.app](https://railway.app) and create a new project
+The model file needs to be included in Git using Git LFS:
+
+```powershell
+# Install Git LFS from https://git-lfs.github.com/
+git lfs install
+git add -f backend/saved_models/microplastic_fasterrcnn.pth
+git commit -m "Add model file with Git LFS"
+git push origin main
+```
+
+#### 2. Deploy Backend to Render
+
+1. Go to [render.com](https://render.com) and create a new web service
 2. Connect your GitHub repository
 3. Set root directory to `backend`
-4. Add environment variable: `CORS_ORIGINS=*` (temporarily)
-5. Copy your Railway URL
+4. Build command: `pip install -r requirements.txt`
+5. Start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+6. Add environment variable: `CORS_ORIGINS=*` (temporarily)
+7. Copy your Render URL
 
-#### 2. Deploy Frontend to Vercel
+#### 3. Deploy Frontend to Vercel
 
 1. Go to [vercel.com](https://vercel.com) and import your repository
 2. Set root directory to `frontend`
-3. Add environment variable: `VITE_API_BASE_URL` = your Railway URL
+3. Add environment variable: `VITE_API_BASE_URL` = your Render URL
 4. Deploy
 
-#### 3. Update CORS
+#### 4. Update CORS
 
-1. Go back to Railway
+1. Go back to Render
 2. Update `CORS_ORIGINS` with your Vercel URL
 3. Redeploy
 
-For detailed deployment instructions, see the individual README files in `backend/` and `frontend/` directories.
+**📖 For detailed step-by-step instructions, see [RENDER_DEPLOYMENT.md](./RENDER_DEPLOYMENT.md)**
 
 ## 📡 API Endpoints
 
@@ -151,8 +165,7 @@ microplastic-app/
 │   ├── main.py                 # FastAPI application
 │   ├── model.py                # Model loading logic
 │   ├── requirements.txt        # Python dependencies
-│   ├── Dockerfile             # Docker configuration
-│   ├── railway.json           # Railway config
+│   ├── render.yaml            # Render config
 │   ├── Procfile               # Process file
 │   └── saved_models/          # Model weights
 │       └── microplastic_fasterrcnn.pth
@@ -232,7 +245,7 @@ This project is part of a microplastic detection system for environmental resear
 
 For issues and questions:
 - Check the individual README files in `backend/` and `frontend/`
-- Review deployment logs in Railway/Vercel dashboards
+- Review deployment logs in Render/Vercel dashboards
 - Check API documentation at `/docs` endpoint
 
 ## 🎓 Learn More

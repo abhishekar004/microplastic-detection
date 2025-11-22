@@ -155,7 +155,7 @@ VITE_API_BASE_URL=http://127.0.0.1:8000
 Set environment variables in your deployment platform (Vercel, Netlify, etc.):
 
 - `VITE_API_BASE_URL`: Your deployed backend API URL
-  - Example: `https://your-api.up.railway.app`
+  - Example: `https://your-api.onrender.com`
 
 **Note**: Vite requires the `VITE_` prefix for environment variables to be exposed to the client.
 

@@ -1,6 +1,11 @@
 # Render Blueprint Configuration
 # This file can be used to deploy via Render Blueprint (optional)
 # Or configure manually in Render dashboard
+#
+# To use this blueprint:
+# 1. Go to Render Dashboard → New → Blueprint
+# 2. Connect your GitHub repository
+# 3. Render will detect this file and configure the service automatically
 
 services:
   - type: web
@@ -8,11 +13,12 @@ services:
     env: python
     region: oregon
     plan: free
+    rootDir: backend
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: CORS_ORIGINS
-        value: "*"
+        value: "*"  # Update this to your frontend URL after deployment
       - key: PORT
-        value: "10000"
+        sync: false  # Render sets this automatically
 
