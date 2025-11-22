@@ -12,7 +12,7 @@ const runtimeOverride = typeof window !== "undefined" ? (window as any).__API_BA
 const localBackend = "http://127.0.0.1:8000";
 const origin = typeof window !== "undefined" ? window.location.origin : localBackend;
 const isLocalHost = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
-const API_BASE_URL = buildTimeUrl || runtimeOverride || (isLocalHost ? localBackend : origin) || localBackend;
+const API_BASE_URL = buildTimeUrl || localBackend || runtimeOverride || (isLocalHost ? localBackend : origin);
 
 export const predictMicroplastics = async (file: File): Promise<PredictionResponse> => {
   const formData = new FormData();
