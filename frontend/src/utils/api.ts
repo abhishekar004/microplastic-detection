@@ -1,14 +1,15 @@
 import axios from "axios";
 import { PredictionResponse } from "@/types/detection";
 
-// API base URL resolution priority:
-// 1) build-time `VITE_API_BASE_URL` (inlined by Vite at build)
-// 2) runtime override `window.__API_BASE_URL__` (set via index.html script)
-// 3) same-origin `window.location.origin` (if backend is served from same domain)
-// 4) fallback to localhost (for local dev)
+// Resolve API base URL in priority order:
+// 1) build-time: import.meta.env.VITE_API_BASE_URL (set during `vite build`)
+// 2) runtime override: window.__API_BASE_URL__ (injected in index.html)
+// 3) same-origin: window.location.origin
+// 4) fallback to localhost (for local development)
 const buildTimeUrl = import.meta.env.VITE_API_BASE_URL;
 const runtimeOverride = typeof window !== "undefined" ? (window as any).__API_BASE_URL__ : undefined;
-const API_BASE_URL = buildTimeUrl || runtimeOverride || (typeof window !== "undefined" ? window.location.origin : "http://127.0.0.1:8000");
+const API_BASE_URL =
+  buildTimeUrl || runtimeOverride || (typeof window !== "undefined" ? window.location.origin : "http://127.0.0.1:8000");
 
 export const predictMicroplastics = async (file: File): Promise<PredictionResponse> => {
   const formData = new FormData();
