@@ -72,3 +72,7 @@ logs/
 # Misc
 .cache/
 *.cache
+
+# Allow frontend utility library (tools used by the frontend)
+!frontend/src/lib/
+!frontend/src/lib/*
