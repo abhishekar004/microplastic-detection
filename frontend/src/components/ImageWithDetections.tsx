@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Detection } from "@/types/detection";
 import { ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils.ts";
 
 interface ImageWithDetectionsProps {
   imageUrl: string;

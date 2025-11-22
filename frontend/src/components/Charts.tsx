@@ -14,7 +14,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils.ts";
 
 interface ChartsProps {
   detections: Detection[];

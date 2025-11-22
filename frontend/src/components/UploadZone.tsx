@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { Upload, Image as ImageIcon, FileImage, Sparkles } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils.ts";
 import { Progress } from "@/components/ui/progress";
 
 interface UploadZoneProps {

@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { ArrowUpDown, Search, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils.ts";
 
 interface DetectionTableProps {
   detections: Detection[];
