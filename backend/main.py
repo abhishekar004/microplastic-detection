@@ -44,18 +44,44 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ---------- Load model once ----------
+# ---------- Load model lazily (on first request) to save memory on startup ----------
+# This helps with Render free tier 512MB limit
 model = None
-try:
-    if not os.path.exists(WEIGHTS_PATH):
-        raise FileNotFoundError(f"Model weights file not found at {WEIGHTS_PATH}")
-    logger.info(f"Loading model from {WEIGHTS_PATH} on device: {DEVICE}")
-    model = load_trained_model(WEIGHTS_PATH, DEVICE)
-    logger.info("Model loaded successfully")
-except (FileNotFoundError, ModelLoadError, Exception) as e:
-    logger.error(f"Failed to load model: {str(e)}")
-    logger.error("Server will start but /predict endpoint will not work until model is available")
-    model = None
+model_loading = False
+model_load_error = None
+
+def get_or_load_model():
+    """Get or load the model (lazy loading for memory efficiency)."""
+    global model, model_loading, model_load_error
+    
+    if model is not None:
+        return model
+    
+    if model_loading:
+        # Model is currently loading, wait a bit
+        import time
+        time.sleep(0.1)
+        return get_or_load_model()
+    
+    if model_load_error is not None:
+        raise ModelLoadError(model_load_error)
+    
+    # Start loading
+    model_loading = True
+    try:
+        if not os.path.exists(WEIGHTS_PATH):
+            raise FileNotFoundError(f"Model weights file not found at {WEIGHTS_PATH}")
+        logger.info(f"Loading model from {WEIGHTS_PATH} on device: {DEVICE}")
+        model = load_trained_model(WEIGHTS_PATH, DEVICE)
+        logger.info("Model loaded successfully")
+        return model
+    except (FileNotFoundError, ModelLoadError, Exception) as e:
+        error_msg = f"Failed to load model: {str(e)}"
+        logger.error(error_msg)
+        model_load_error = error_msg
+        raise ModelLoadError(error_msg)
+    finally:
+        model_loading = False
 
 # Simple transform: to tensor (like in training)
 transform = T.Compose([
@@ -154,11 +180,13 @@ async def predict(file: UploadFile = File(...)):
             ]
         }
     """
-    # Check if model is loaded
-    if model is None:
+    # Load model on first request (lazy loading)
+    try:
+        current_model = get_or_load_model()
+    except ModelLoadError as e:
         raise HTTPException(
             status_code=503,
-            detail="Model not available. Please check server logs."
+            detail=f"Model not available: {str(e)}"
         )
     
     try:
@@ -175,7 +203,7 @@ async def predict(file: UploadFile = File(...)):
         # Model inference
         try:
             with torch.no_grad():
-                outputs = model([img_tensor])
+                outputs = current_model([img_tensor])
         except Exception as e:
             logger.error(f"Model inference error: {str(e)}")
             raise HTTPException(
@@ -226,22 +254,27 @@ async def predict(file: UploadFile = File(...)):
 @app.get("/")
 def root():
     """Health check endpoint."""
+    model_loaded = model is not None
     return {
         "message": "Microplastic Detection API is running",
-        "status": "healthy" if model is not None else "degraded",
-        "model_loaded": model is not None,
-        "device": str(DEVICE)
+        "status": "healthy" if model_loaded else "degraded",
+        "model_loaded": model_loaded,
+        "device": str(DEVICE),
+        "note": "Model loads on first request to save memory" if not model_loaded else None
     }
 
 
 @app.get("/health")
 def health_check():
     """Detailed health check endpoint."""
+    model_loaded = model is not None
     return {
-        "status": "healthy" if model is not None else "degraded",
-        "model_loaded": model is not None,
+        "status": "healthy" if model_loaded else "degraded",
+        "model_loaded": model_loaded,
         "model_path": WEIGHTS_PATH,
         "model_exists": os.path.exists(WEIGHTS_PATH) if WEIGHTS_PATH else False,
         "device": str(DEVICE),
-        "cuda_available": torch.cuda.is_available()
+        "cuda_available": torch.cuda.is_available(),
+        "lazy_loading": True,
+        "note": "Model loads on first /predict request to save memory" if not model_loaded else None
     }

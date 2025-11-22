@@ -25,7 +25,7 @@ def get_model(num_classes: int = NUM_CLASSES):
 
 def load_trained_model(weights_path: str, device: torch.device):
     """
-    Load a trained model from weights file.
+    Load a trained model from weights file with memory optimization.
     
     Args:
         weights_path: Path to the model weights file
@@ -46,12 +46,18 @@ def load_trained_model(weights_path: str, device: torch.device):
         raise ModelLoadError(f"Model weights file is not readable: {weights_path}")
     
     try:
-        # Create model architecture
+        # Create model architecture first
         model = get_model()
         
-        # Load weights
+        # Load weights directly to device to avoid double memory usage
+        # Use weights_only=True for security and memory efficiency (PyTorch 2.0+)
         try:
-            state_dict = torch.load(weights_path, map_location=device)
+            # Try loading with weights_only first (more memory efficient)
+            try:
+                state_dict = torch.load(weights_path, map_location=device, weights_only=True)
+            except TypeError:
+                # Fallback for older PyTorch versions
+                state_dict = torch.load(weights_path, map_location=device)
         except Exception as e:
             raise ModelLoadError(f"Failed to load weights file (may be corrupted): {str(e)}")
         
@@ -61,9 +67,16 @@ def load_trained_model(weights_path: str, device: torch.device):
         except Exception as e:
             raise ModelLoadError(f"State dict does not match model architecture: {str(e)}")
         
+        # Clear state_dict from memory before moving model
+        del state_dict
+        
         # Move to device and set to eval mode
         model.to(device)
         model.eval()
+        
+        # Clear cache if on CPU (helps with memory)
+        if device.type == 'cpu':
+            torch.cuda.empty_cache() if torch.cuda.is_available() else None
         
         return model
     
