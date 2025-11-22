@@ -19,6 +19,10 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
 
 # Virtual environments
 venv/
@@ -40,15 +44,21 @@ Thumbs.db
 node_modules/
 npm-debug.log
 yarn-error.log
+bun.lockb
+# Note: package-lock.json is kept for consistency (already tracked)
+yarn.lock
+pnpm-lock.yaml
 
 # Build files
 dist/
 build/
 
 # Large model files - use Git LFS or upload separately
-backend/saved_models/*.pth
-backend/saved_models/*.pt
-backend/saved_models/*.onnx
+*.pth
+*.pt
+*.onnx
+backend/saved_models/
+saved_models/
 
 # Environment files
 .env
