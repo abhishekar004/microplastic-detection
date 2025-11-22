@@ -21,6 +21,11 @@
 
   <body>
     <div id="root"></div>
+    <!-- Runtime API base override (set by deployment) -->
+    <script>
+      // Override API base URL at runtime (deployed backend)
+      window.__API_BASE_URL__ = "https://microplastic-detection-tv0r.onrender.com";
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
