@@ -114,7 +114,8 @@ Fill in these settings:
 
 **Build & Deploy:**
 - **Runtime:** `Python 3`
-- **Build Command:** `pip install -r requirements.txt`
+- **Build Command:** `pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu && pip install -r requirements.txt`
+  - ⚠️ **IMPORTANT:** This installs CPU-only PyTorch (~200MB) instead of full version (~1GB+) to fit within 512MB free tier
 - **Start Command:** `uvicorn main:app --host 0.0.0.0 --port $PORT`
 
 **Plan:**
@@ -131,7 +132,12 @@ Click **"Add Environment Variable"** and add:
    - **Value:** `*` (we'll update this later)
    - Click **"Save"**
 
-2. **Second Variable (optional):**
+2. **Second Variable (IMPORTANT for free tier):**
+   - **Key:** `FORCE_CPU`
+   - **Value:** `true` (forces CPU mode, saves memory)
+   - Click **"Save"**
+
+3. **Third Variable (optional):**
    - **Key:** `PORT`
    - **Value:** `10000` (Render sets this automatically, but you can specify)
    - Click **"Save"**
@@ -322,7 +328,7 @@ Visit: `https://your-service.onrender.com/docs`
 - Check Render build logs
 - Verify root directory is `backend`
 - Check `requirements.txt` is correct
-- Verify build command: `pip install -r requirements.txt`
+- Verify build command includes CPU-only PyTorch: `pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu && pip install -r requirements.txt`
 - Verify start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
 
 **Model not loading:**
@@ -344,13 +350,15 @@ Visit: `https://your-service.onrender.com/docs`
 - Wait for service to be "Live" before testing
 - Check browser console for exact CORS error message
 
-**Memory issues:**
-- PyTorch uses significant memory
-- Free tier has 512MB RAM limit
-- If you hit limits, consider:
-  - Using CPU-only PyTorch build (already default)
-  - Optimizing model loading
-  - Upgrading to paid plan
+**Memory issues (Out of memory / 512MB limit):**
+- ⚠️ **Common issue on Render free tier**
+- **Solution 1:** Ensure you're using CPU-only PyTorch in build command:
+  - Build Command: `pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu && pip install -r requirements.txt`
+- **Solution 2:** Add `FORCE_CPU=true` environment variable
+- **Solution 3:** Check Render logs - if build fails during `pip install`, it's likely PyTorch size
+- **Solution 4:** If still failing, consider:
+  - Upgrading to Render Starter plan ($7/month) - 512MB → 2GB RAM
+  - Or use alternative deployment (Railway, Fly.io, etc.)
 
 **Build timeout:**
 - Git LFS download during build might timeout

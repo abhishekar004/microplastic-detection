@@ -8,11 +8,13 @@
 3. Connect your `microplastic-detection` repo
 4. Settings:
    - **Root Directory:** `backend`
-   - **Build Command:** `pip install -r requirements.txt`
+   - **Build Command:** `pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu && pip install -r requirements.txt`
+     - ⚠️ **IMPORTANT:** CPU-only PyTorch for 512MB free tier
    - **Start Command:** `uvicorn main:app --host 0.0.0.0 --port $PORT`
    - **Plan:** Free
 5. Environment Variables:
    - `CORS_ORIGINS=*`
+   - `FORCE_CPU=true` (saves memory)
 6. Click "Create Web Service"
 7. Wait for deployment (5-10 min)
 8. Copy URL: `https://xxx.onrender.com`
@@ -75,11 +77,16 @@ Render will rebuild automatically.
 
 ## 🆘 Quick Troubleshooting
 
+**Out of memory (512MB)?** 
+- ✅ Use CPU-only PyTorch in build command (already configured)
+- ✅ Add `FORCE_CPU=true` environment variable
+- If still failing, upgrade to Starter plan ($7/month) for 2GB RAM
+
 **Service sleeping?** Free tier sleeps after 15min. First request takes ~30s.
 
 **Model not loading?** Check if file is in Git LFS and pushed.
 
 **CORS errors?** Verify `CORS_ORIGINS` has your Vercel URL.
 
-See `DEPLOY_RENDER.md` for detailed guide.
+See `RENDER_DEPLOYMENT.md` for detailed guide.
 

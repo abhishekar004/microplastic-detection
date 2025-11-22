@@ -15,7 +15,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # ---------- Config ----------
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# Force CPU mode on Render free tier (saves memory)
+FORCE_CPU = os.getenv("FORCE_CPU", "false").lower() == "true"
+DEVICE = torch.device("cpu" if FORCE_CPU or not torch.cuda.is_available() else "cuda")
 WEIGHTS_PATH = "saved_models/microplastic_fasterrcnn.pth"
 SCORE_THRESHOLD = 0.5  # filter weak predictions
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB max file size
