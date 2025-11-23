@@ -33,6 +33,10 @@ if cors_origins_env == "*":
 else:
     # Split by comma and strip whitespace from each origin
     CORS_ORIGINS = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
+    # Validate: if empty list, fall back to wildcard (but log warning)
+    if not CORS_ORIGINS:
+        logger.warning(f"CORS_ORIGINS environment variable is empty or invalid, falling back to '*'")
+        CORS_ORIGINS = ["*"]
 
 logger.info(f"CORS configured with origins: {CORS_ORIGINS}")
 
