@@ -25,8 +25,16 @@ ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 ALLOWED_MIME_TYPES = {"image/jpeg", "image/png", "image/bmp", "image/webp"}
 
 # CORS origins - in production, set this to your frontend URL
-# For development, you can use ["*"] or specific origins like ["http://localhost:8080"]
-CORS_ORIGINS = os.getenv("CORS_ORIGINS", "*").split(",") if os.getenv("CORS_ORIGINS") != "*" else ["*"]
+# For development, you can use "*" or specific origins like "http://localhost:8080"
+# For production, use comma-separated list: "https://app.vercel.app,https://app2.vercel.app"
+cors_origins_env = os.getenv("CORS_ORIGINS", "*")
+if cors_origins_env == "*":
+    CORS_ORIGINS = ["*"]
+else:
+    # Split by comma and strip whitespace from each origin
+    CORS_ORIGINS = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
+
+logger.info(f"CORS configured with origins: {CORS_ORIGINS}")
 
 # ---------- App ----------
 app = FastAPI(
