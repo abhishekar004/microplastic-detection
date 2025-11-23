@@ -305,3 +305,14 @@ def health_check():
         "lazy_loading": True,
         "note": "Model loads on first /predict request to save memory" if not model_loaded else None
     }
+
+
+@app.get("/cors-test")
+def cors_test():
+    """Test endpoint to verify CORS is working."""
+    return {
+        "message": "CORS test endpoint",
+        "cors_origins": CORS_ORIGINS,
+        "allow_credentials": USE_CREDENTIALS,
+        "cors_origins_env": os.getenv("CORS_ORIGINS", "not set")
+    }
