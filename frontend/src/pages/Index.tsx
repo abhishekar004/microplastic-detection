@@ -4,7 +4,7 @@ import { ImageWithDetections } from "@/components/ImageWithDetections";
 import { StatisticsPanel } from "@/components/StatisticsPanel";
 import { DetectionTable } from "@/components/DetectionTable";
 import { Charts } from "@/components/Charts";
-import { predictMicroplastics } from "@/utils/api";
+import { predictMicroplastics, getApiBaseUrl } from "@/utils/api";
 import { PredictionResponse } from "@/types/detection";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -30,10 +30,24 @@ const Index = () => {
       toast.success(`Analysis complete! Found ${response.detections.length} microplastics.`);
     } catch (error: any) {
       console.error("Error analyzing image:", error);
-      toast.error(
-        error.response?.data?.detail || 
-        "Failed to analyze image. Please make sure the backend server is running on http://127.0.0.1:8000"
-      );
+      
+      // Get the actual API URL being used for better error messages
+      const apiUrl = getApiBaseUrl();
+      
+      let errorMessage = "Failed to analyze image.";
+      
+      if (error.response) {
+        // Server responded with error
+        errorMessage = error.response.data?.detail || errorMessage;
+      } else if (error.request) {
+        // Request was made but no response received
+        errorMessage = `Cannot connect to backend server at ${apiUrl}. Please check if the backend is running and the VITE_API_BASE_URL environment variable is set correctly.`;
+      } else {
+        // Something else happened
+        errorMessage = error.message || errorMessage;
+      }
+      
+      toast.error(errorMessage);
       setResult(null);
     } finally {
       setIsAnalyzing(false);
