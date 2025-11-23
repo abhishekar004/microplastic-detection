@@ -25,11 +25,15 @@ ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 ALLOWED_MIME_TYPES = {"image/jpeg", "image/png", "image/bmp", "image/webp"}
 
 # CORS origins - in production, set this to your frontend URL
-# For development, you can use "*" or specific origins like "http://localhost:8080"
-# For production, use comma-separated list: "https://app.vercel.app,https://app2.vercel.app"
+# IMPORTANT: When allow_credentials=True, you CANNOT use "*" - must specify exact origins
+# For development: "http://localhost:8080"
+# For production: "https://app.vercel.app" or comma-separated: "https://app1.vercel.app,https://app2.vercel.app"
 cors_origins_env = os.getenv("CORS_ORIGINS", "*")
 if cors_origins_env == "*":
+    # For development, allow all origins but disable credentials
     CORS_ORIGINS = ["*"]
+    USE_CREDENTIALS = False
+    logger.warning("CORS_ORIGINS is '*', disabling credentials (required when using wildcard)")
 else:
     # Split by comma and strip whitespace from each origin
     CORS_ORIGINS = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
@@ -37,8 +41,12 @@ else:
     if not CORS_ORIGINS:
         logger.warning(f"CORS_ORIGINS environment variable is empty or invalid, falling back to '*'")
         CORS_ORIGINS = ["*"]
+        USE_CREDENTIALS = False
+    else:
+        # Specific origins - can use credentials
+        USE_CREDENTIALS = True
 
-logger.info(f"CORS configured with origins: {CORS_ORIGINS}")
+logger.info(f"CORS configured with origins: {CORS_ORIGINS}, allow_credentials: {USE_CREDENTIALS}")
 
 # ---------- App ----------
 app = FastAPI(
@@ -51,8 +59,8 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["GET", "POST"],
+    allow_credentials=USE_CREDENTIALS,
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
 
