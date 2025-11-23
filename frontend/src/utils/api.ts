@@ -3,12 +3,13 @@ import { PredictionResponse } from "@/types/detection";
 
 // Resolve API base URL with simple priority:
 // 1) build-time: import.meta.env.VITE_API_BASE_URL (set during `vite build`)
-// 2) same-origin: window.location.origin (works for production on Vercel/Render)
-// 3) fallback: http://127.0.0.1:8000 (for local development)
+// 2) localhost: http://127.0.0.1:8000 (for local development with Vite dev server)
+// 3) same-origin: window.location.origin (for production deployments)
 const buildTimeUrl = import.meta.env.VITE_API_BASE_URL;
-const sameOrigin = typeof window !== "undefined" ? window.location.origin : undefined;
+const isLocalDev = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
 const localDefault = "http://127.0.0.1:8000";
-const API_BASE_URL = buildTimeUrl || sameOrigin || localDefault;
+const sameOrigin = typeof window !== "undefined" ? window.location.origin : undefined;
+const API_BASE_URL = buildTimeUrl || (isLocalDev ? localDefault : sameOrigin) || localDefault;
 
 export const predictMicroplastics = async (file: File): Promise<PredictionResponse> => {
   const formData = new FormData();
