@@ -28,25 +28,32 @@ ALLOWED_MIME_TYPES = {"image/jpeg", "image/png", "image/bmp", "image/webp"}
 # IMPORTANT: When allow_credentials=True, you CANNOT use "*" - must specify exact origins
 # For development: "http://localhost:8080"
 # For production: "https://app.vercel.app" or comma-separated: "https://app1.vercel.app,https://app2.vercel.app"
-cors_origins_env = os.getenv("CORS_ORIGINS", "*")
-if cors_origins_env == "*":
-    # For development, allow all origins but disable credentials
-    CORS_ORIGINS = ["*"]
-    USE_CREDENTIALS = False
-    logger.warning("CORS_ORIGINS is '*', disabling credentials (required when using wildcard)")
-else:
-    # Split by comma and strip whitespace from each origin
-    CORS_ORIGINS = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
-    # Validate: if empty list, fall back to wildcard (but log warning)
-    if not CORS_ORIGINS:
-        logger.warning(f"CORS_ORIGINS environment variable is empty or invalid, falling back to '*'")
+try:
+    cors_origins_env = os.getenv("CORS_ORIGINS", "*")
+    logger.info(f"Reading CORS_ORIGINS from environment: '{cors_origins_env}'")
+    
+    if cors_origins_env == "*":
+        # For development, allow all origins but disable credentials
         CORS_ORIGINS = ["*"]
         USE_CREDENTIALS = False
+        logger.warning("CORS_ORIGINS is '*', disabling credentials (required when using wildcard)")
     else:
-        # Specific origins - can use credentials
-        USE_CREDENTIALS = True
-
-logger.info(f"CORS configured with origins: {CORS_ORIGINS}, allow_credentials: {USE_CREDENTIALS}")
+        # Split by comma and strip whitespace from each origin
+        CORS_ORIGINS = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
+        # Validate: if empty list, fall back to wildcard (but log warning)
+        if not CORS_ORIGINS:
+            logger.warning(f"CORS_ORIGINS environment variable is empty or invalid, falling back to '*'")
+            CORS_ORIGINS = ["*"]
+            USE_CREDENTIALS = False
+        else:
+            # Specific origins - can use credentials
+            USE_CREDENTIALS = True
+    
+    logger.info(f"CORS configured with origins: {CORS_ORIGINS}, allow_credentials: {USE_CREDENTIALS}")
+except Exception as e:
+    logger.error(f"Error configuring CORS: {e}, falling back to default")
+    CORS_ORIGINS = ["*"]
+    USE_CREDENTIALS = False
 
 # ---------- App ----------
 app = FastAPI(
