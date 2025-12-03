@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#60a5fa;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="48" fill="url(#grad)" stroke="#1e40af" stroke-width="2"/>
+  
+  <!-- Microscope base -->
+  <rect x="35" y="70" width="30" height="8" rx="2" fill="#ffffff" opacity="0.9"/>
+  
+  <!-- Microscope stand -->
+  <rect x="48" y="50" width="4" height="20" fill="#ffffff" opacity="0.9"/>
+  
+  <!-- Microscope arm -->
+  <rect x="20" y="48" width="50" height="4" rx="2" fill="#ffffff" opacity="0.9"/>
+  
+  <!-- Microscope tube -->
+  <rect x="20" y="30" width="8" height="20" rx="2" fill="#ffffff" opacity="0.9"/>
+  
+  <!-- Microscope eyepiece -->
+  <circle cx="24" cy="28" r="6" fill="#ffffff" opacity="0.9" stroke="#1e40af" stroke-width="1.5"/>
+  
+  <!-- Microscope objective lens -->
+  <circle cx="28" cy="50" r="4" fill="#ffffff" opacity="0.9" stroke="#1e40af" stroke-width="1.5"/>
+  
+  <!-- Stage/platform -->
+  <rect x="30" y="52" width="20" height="3" rx="1" fill="#ffffff" opacity="0.7"/>
+  
+  <!-- Light rays -->
+  <path d="M 30 53 L 25 48 M 35 53 L 30 48 M 40 53 L 35 48 M 45 53 L 40 48" 
+        stroke="#ffffff" stroke-width="1.5" opacity="0.6" stroke-linecap="round"/>
+</svg>
+

@@ -1,0 +1,78 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+bun.lockb
+# Note: package-lock.json is kept for consistency (already tracked)
+yarn.lock
+pnpm-lock.yaml
+
+# Build files
+dist/
+build/
+
+# Large model files - use Git LFS or upload separately
+*.pth
+*.pt
+*.onnx
+backend/saved_models/
+saved_models/
+
+# Environment files
+.env
+.env.local
+*.env
+
+# Logs
+*.log
+logs/
+
+# Misc
+.cache/
+*.cache
+
+# Allow frontend utility library (tools used by the frontend)
+!frontend/src/lib/
+!frontend/src/lib/*

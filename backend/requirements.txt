@@ -1,0 +1,8 @@
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+# Note: torch and torchvision installed separately via build command
+# using CPU-only versions to save memory (~200MB vs ~1GB+ with CUDA)
+pillow>=10.0.0
+numpy>=1.24.0
+python-multipart>=0.0.6
+requests>=2.31.0
